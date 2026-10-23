@@ -340,10 +340,10 @@ async function messagesTab(c){
   try{const [g,r]=await Promise.all([getDoc(doc(db,'chats',me.giveTo)),getDoc(doc(db,'chats',me.code))]);
     asked=(g.exists()&&g.data().items)||[];got=(r.exists()&&r.data().items)||[]}
   catch(e){c.innerHTML='<div class="card err">Could not load messages.</div>';return}
-  const who=esc(match.codename||'Your match'),left=2-asked.length;
-  c.innerHTML=`<div class="card"><h3>Ask ${who}</h3><p class="meta" style="margin:0 0 8px">You can ask 2 questions. They won't know who you are.</p>
+  const who=esc(match.codename||'Your match'),left=4-asked.length;
+  c.innerHTML=`<div class="card"><h3>Ask ${who}</h3><p class="meta" style="margin:0 0 8px">You can ask up to 4 questions. They won't know who you are.</p>
   ${asked.map(i=>`<div style="margin:8px 0"><b>You:</b> ${esc(i.q)}<br><b>${who}:</b> ${i.a?esc(i.a):'<span class="meta">Waiting for an answer...</span>'}</div>`).join('')}
-  ${left>0?`<textarea id="q" maxlength="300" placeholder="Your question..." style="min-height:70px"></textarea><button id="ask">💬 Send question (${left} left)</button>`:'<p class="meta">You\'ve used both questions.</p>'}<div class="err" id="merr"></div></div>
+  ${left>0?`<textarea id="q" maxlength="300" placeholder="Your question..." style="min-height:70px"></textarea><button id="ask">💬 Send question (${left} left)</button>`:'<p class="meta">You\'ve used all 4 questions.</p>'}<div class="err" id="merr"></div></div>
   <div class="card"><h3>From your Santa</h3>${got.length?got.map((i,n)=>`<div style="margin:8px 0"><b>Your Santa:</b> ${esc(i.q)}<br>${i.a?`<b>You:</b> ${esc(i.a)}`:`<textarea id="a${n}" maxlength="300" placeholder="Your answer..." style="min-height:60px"></textarea><button class="sm" data-a="${n}">📨 Send answer</button>`}</div>`).join(''):'<p class="meta">No questions yet. Check back later.</p>'}</div>`;
   const save=async(id,items)=>{try{await setDoc(doc(db,'chats',id),{items});messagesTab(c)}catch(e){$('#merr').textContent='Could not send. Try again.'}};
   const ask=$('#ask');if(ask)ask.onclick=()=>{const q=$('#q').value.trim();if(q)save(me.giveTo,[...asked,{q,a:null}])};
